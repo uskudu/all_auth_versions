@@ -1,0 +1,68 @@
+definitions:
+  session.Credentials:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: All ways to auth
+  version: "1.0"
+paths:
+  /basic-secure:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BasicAuth: []
+      summary: Secured endpoint
+      tags:
+      - basic
+  /home:
+    get:
+      produces:
+      - application/json
+      responses: {}
+      tags:
+      - session
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/session.Credentials'
+      produces:
+      - application/json
+      responses: {}
+      tags:
+      - session
+  /logout:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      tags:
+      - session
+  /refresh:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      tags:
+      - session
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
