@@ -1,6 +1,7 @@
 package session
 
 import (
+	"all_auth_versions/internal/shared"
 	"errors"
 	"net/http"
 	"time"
@@ -37,14 +38,14 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 	// validate username+password
-	expectedPassword, ok := users[creds.Username]
+	expectedPassword, ok := shared.UsersDB[creds.Username]
 	if !ok || expectedPassword != creds.Password {
 		c.AbortWithStatus(http.StatusUnauthorized)
 	}
 
 	// if ok then create token
 	sessionToken := uuid.NewString()
-	expiresAt := time.Now().Add(60 * time.Second)
+	expiresAt := time.Now().Add(10 * time.Second)
 
 	sessions[sessionToken] = session{
 		username: creds.Username,
@@ -123,7 +124,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 
 	// if all ok
 	newToken := uuid.NewString()
-	expiresAt := time.Now().Add(60 * time.Second)
+	expiresAt := time.Now().Add(10 * time.Second)
 
 	sessions[newToken] = session{
 		username: userSession.username,

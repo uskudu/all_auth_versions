@@ -4,6 +4,7 @@ import (
 	_ "all_auth_versions/docs"
 	"all_auth_versions/internal/basic"
 	"all_auth_versions/internal/session"
+	"all_auth_versions/internal/shared"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -17,7 +18,7 @@ func main() {
 	r := gin.Default()
 
 	basicHandler := basic.NewHandler()
-	r.GET("/basic-secure", gin.BasicAuth(basic.Accounts), basicHandler.BasicSecure)
+	r.GET("/basic-secure", gin.BasicAuth(shared.UsersDB), basicHandler.BasicSecure)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	h := session.NewHandler()

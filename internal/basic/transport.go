@@ -13,11 +13,6 @@ func NewHandler() *Handler {
 	return &Handler{}
 }
 
-type RegisterForm struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 // BasicSecure
 // @Summary Secured endpoint
 // @Tags basic
