@@ -1,5 +1,5 @@
 definitions:
-  session.Credentials:
+  shared.Credentials:
     properties:
       password:
         type: string
@@ -25,14 +25,7 @@ paths:
       summary: Secured endpoint
       tags:
       - basic
-  /home:
-    get:
-      produces:
-      - application/json
-      responses: {}
-      tags:
-      - session
-  /login:
+  /session/login:
     post:
       consumes:
       - application/json
@@ -42,26 +35,56 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/session.Credentials'
+          $ref: '#/definitions/shared.Credentials'
       produces:
       - application/json
       responses: {}
       tags:
       - session
-  /logout:
+  /session/logout:
     post:
       produces:
       - application/json
       responses: {}
       tags:
       - session
-  /refresh:
+  /session/refresh:
     post:
       produces:
       - application/json
       responses: {}
       tags:
       - session
+  /session/secure:
+    get:
+      produces:
+      - application/json
+      responses: {}
+      tags:
+      - session
+  /token/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/shared.Credentials'
+      produces:
+      - application/json
+      responses: {}
+      tags:
+      - token
+  /token/secure:
+    get:
+      produces:
+      - application/json
+      responses: {}
+      tags:
+      - token
 securityDefinitions:
   BasicAuth:
     type: basic

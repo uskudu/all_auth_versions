@@ -17,22 +17,17 @@ func NewHandler() *Handler {
 	return &Handler{}
 }
 
-type Credentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 // Login
 // @Tags session
 // @Accept json
 // @Produce json
-// @Param credentials body Credentials true "Credentials"
+// @Param credentials body shared.Credentials true "Credentials"
 // Success 200 {object} map[string]string
 // Failure 400 {object} map[string]string
 // Failure 401 {object} map[string]string
-// @Router /login [post]
+// @Router /session/login [post]
 func (h *Handler) Login(c *gin.Context) {
-	var creds Credentials
+	var creds shared.Credentials
 	if err := c.BindJSON(&creds); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
@@ -42,8 +37,7 @@ func (h *Handler) Login(c *gin.Context) {
 	if !ok || expectedPassword != creds.Password {
 		c.AbortWithStatus(http.StatusUnauthorized)
 	}
-
-	// if ok then create token
+	// create session token
 	sessionToken := uuid.NewString()
 	expiresAt := time.Now().Add(10 * time.Second)
 
@@ -52,7 +46,7 @@ func (h *Handler) Login(c *gin.Context) {
 		expire:   expiresAt,
 	}
 	// set cookie
-	c.SetCookie("session_token", sessionToken, 60, "", "", false, false)
+	c.SetCookie("session_token", sessionToken, shared.SessionTokenMaxAgeSeconds, "", "", false, false)
 }
 
 // Secured
@@ -61,7 +55,7 @@ func (h *Handler) Login(c *gin.Context) {
 // Success 200 {object} map[string]string
 // Failure 400 {object} map[string]string
 // Failure 401 {object} map[string]string
-// @Router /home [get]
+// @Router /session/secure [get]
 func (h *Handler) Secured(c *gin.Context) {
 	token, err := c.Cookie("session_token")
 	if err != nil {
@@ -87,7 +81,7 @@ func (h *Handler) Secured(c *gin.Context) {
 	}
 
 	// if all ok
-	c.JSON(http.StatusOK, gin.H{"message": "hello nigger"})
+	c.JSON(http.StatusOK, gin.H{"message": "hello friend"})
 	return
 }
 
@@ -97,7 +91,7 @@ func (h *Handler) Secured(c *gin.Context) {
 // Success 200 {object} map[string]string
 // Failure 400 {object} map[string]string
 // Failure 401 {object} map[string]string
-// @Router /refresh [post]
+// @Router /session/refresh [post]
 func (h *Handler) Refresh(c *gin.Context) {
 	token, err := c.Cookie("session_token")
 	if err != nil {
@@ -124,7 +118,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 
 	// if all ok
 	newToken := uuid.NewString()
-	expiresAt := time.Now().Add(10 * time.Second)
+	expiresAt := time.Now().Add(shared.SessionTokenMaxAgeSeconds * time.Second)
 
 	sessions[newToken] = session{
 		username: userSession.username,
@@ -132,7 +126,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 	}
 	delete(sessions, token)
 	// set cookie
-	c.SetCookie("session_token", newToken, 60, "", "", false, false)
+	c.SetCookie("session_token", newToken, shared.SessionTokenMaxAgeSeconds, "", "", false, false)
 }
 
 // Logout
@@ -141,7 +135,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 // Success 200 {object} map[string]string
 // Failure 400 {object} map[string]string
 // Failure 401 {object} map[string]string
-// @Router /logout [post]
+// @Router /session/logout [post]
 func (h *Handler) Logout(c *gin.Context) {
 	token, err := c.Cookie("session_token")
 	if err != nil {

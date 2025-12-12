@@ -39,18 +39,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/home": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "session"
-                ],
-                "responses": {}
-            }
-        },
-        "/login": {
+        "/session/login": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -68,14 +57,14 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/session.Credentials"
+                            "$ref": "#/definitions/shared.Credentials"
                         }
                     }
                 ],
                 "responses": {}
             }
         },
-        "/logout": {
+        "/session/logout": {
             "post": {
                 "produces": [
                     "application/json"
@@ -86,7 +75,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/refresh": {
+        "/session/refresh": {
             "post": {
                 "produces": [
                     "application/json"
@@ -96,10 +85,57 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
+        },
+        "/session/secure": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "session"
+                ],
+                "responses": {}
+            }
+        },
+        "/token/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "token"
+                ],
+                "parameters": [
+                    {
+                        "description": "Credentials",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared.Credentials"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/token/secure": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "token"
+                ],
+                "responses": {}
+            }
         }
     },
     "definitions": {
-        "session.Credentials": {
+        "shared.Credentials": {
             "type": "object",
             "properties": {
                 "password": {
