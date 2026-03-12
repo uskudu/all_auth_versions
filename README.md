@@ -94,9 +94,3 @@ all_auth_versions/
 - Support at least OAuth2 + PKCE
 - Include Docker example
 - No external deps in core
-
-Report issues for missing versions/providers.
-
-***
-
-⭐ **Star this repo if it saves you auth migration headaches!**
